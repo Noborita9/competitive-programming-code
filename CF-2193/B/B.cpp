@@ -1,0 +1,44 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define L(i, j, n) for (int i = (j); i < (int)n; i ++)
+#define SZ(x) int((x).size())
+#define ALL(x) begin(x),end(x)
+#define vec vector
+#define pb push_back
+#define eb emplace_back
+
+using ll = long long;
+using ld = long double;
+
+void solve()
+{
+    int n; cin >> n;
+    vec<int> a(n), back(n);
+    L(i,0,n){
+        cin >> a[i];
+        a[i] --;
+        back[a[i]] = i;
+    }
+    int sb = n - 1;
+    L(i,0,n){
+        if (a[i] != sb) {
+            reverse(begin(a) + i, begin(a) + back[sb] + 1);
+            break;
+        }
+        sb --;
+    }
+    L(i,0,n) cout << a[i]+1 << " "; cout << "\n";
+}
+
+
+int main()
+{
+    ios::sync_with_stdio(0);cin.tie(0);
+    int TT = 1;
+    cin >> TT;
+    while (TT--)
+    {
+        solve();
+    }
+}
