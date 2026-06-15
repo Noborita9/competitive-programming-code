@@ -11,20 +11,15 @@ using namespace std;
 using ll = long long;
 using ld = long double;
 
-const int N = 11e6;
-
-
-using ii = pair<ll, ll>;
-
 void solve()
 {
-    int n, m; cin >> n >> m;
-    vec<ll> a(n);
-    L(i,0,n) cin >>a[i];
-    sort(ALL(a));
-    ll sm = 0;
-    L(i,2, n) sm += 2 * a[i];
-    // oh shit
+    ll a; int n; cin >> a >> n;
+    vec<ll> d(n);
+    L(i,0,n){
+        
+    }
+
+    cout << ans << "\n";
 }
 
 
@@ -35,7 +30,6 @@ int main()
     cin >> TT;
     while (TT--)
     {
-        // cout << TT << "\n";
         solve();
     }
 }

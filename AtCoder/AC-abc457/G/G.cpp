@@ -11,20 +11,23 @@ using namespace std;
 using ll = long long;
 using ld = long double;
 
-const int N = 11e6;
-
-
-using ii = pair<ll, ll>;
-
 void solve()
 {
-    int n, m; cin >> n >> m;
-    vec<ll> a(n);
-    L(i,0,n) cin >>a[i];
-    sort(ALL(a));
-    ll sm = 0;
-    L(i,2, n) sm += 2 * a[i];
-    // oh shit
+    int n; cin >> n;
+    vec<pair<ll, ll>> pts; pts.reserve(n);
+    L(i,0,n){
+        ll x, t; cin >> t >> x;
+        pts.eb(t - x, t + x);
+    }
+    sort(ALL(pts));
+    vec<int> lds;
+        for (auto [u, v]: pts) {
+        auto it = lower_bound(ALL(lds), -v);
+        if (it == end(lds)) lds.pb(-v);
+        else *it = -v;
+    }
+    // cout << "\n";
+    cout << SZ(lds) << "\n";
 }
 
 
@@ -32,10 +35,9 @@ int main()
 {
     ios::sync_with_stdio(0);cin.tie(0);
     int TT = 1;
-    cin >> TT;
+    //cin >> TT;
     while (TT--)
     {
-        // cout << TT << "\n";
         solve();
     }
 }

@@ -1,0 +1,112 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define L(i, j, n) for (int i = (j); i < (int)n; i ++)
+#define SZ(x) int((x).size())
+#define ALL(x) begin(x),end(x)
+#define vec vector
+#define pb push_back
+#define eb emplace_back
+
+using ll = long long;
+using ld = long double;
+
+const int oo = (int)1e9;
+struct Dinic {
+	bool scaling = false; // com scaling -> O(nm log(MAXCAP)),
+	int lim;                    // com constante alta
+	struct edge {
+		int to, cap, rev, flow;
+		bool res;
+		edge(int to_, int cap_, int rev_, bool res_)
+			: to(to_), cap(cap_), rev(rev_), flow(0), res(res_) {}
+	};
+	vec<vec<edge>> g;
+	vec<int> lev, beg;
+	ll F;
+	Dinic(int n) : g(n), F(0) {}
+	void add(int a, int b, int c) {
+		g[a].emplace_back(b, c, g[b].size(), false);
+		g[b].emplace_back(a, 0, g[a].size()-1, true);
+	}
+	bool bfs(int s, int t) {
+		lev = vector<int>(g.size(), -1); lev[s] = 0;
+		beg = vector<int>(g.size(), 0);
+		queue<int> q; q.push(s);
+		while (q.size()) {
+			int u = q.front(); q.pop();
+			for (auto& i : g[u]) {
+				if (lev[i.to] != -1 or (i.flow == i.cap)) continue;
+				if (scaling and i.cap - i.flow < lim) continue;
+				lev[i.to] = lev[u] + 1;
+				q.push(i.to);
+			}
+		}
+		return lev[t] != -1;
+	}
+	int dfs(int v, int s, int f = oo) {
+		if (!f or v == s) return f;
+		for (int& i = beg[v]; i < g[v].size(); i++) {
+			auto& e = g[v][i];
+			if (lev[e.to] != lev[v] + 1) continue;
+			int foi = dfs(e.to, s, min(f, e.cap - e.flow));
+			if (!foi) continue;
+			e.flow += foi, g[e.to][e.rev].flow -= foi;
+			return foi;
+		}
+		return 0;
+	}
+	ll max_flow(int s, int t) {
+		for (lim = scaling ? (1<<30) : 1; lim; lim /= 2)
+			while (bfs(s, t)) while (int ff = dfs(s, t)) F += ff;
+		return F;
+	}
+};
+vec<pair<int, int>> get_cut(Dinic& g, int s, int t) {
+	g.max_flow(s, t);
+	vec<pair<int, int>> cut;
+	vec<int> vis(g.g.size(), 0), st = {s};
+	vis[s] = 1;
+	while (st.size()) {
+		int u = st.back(); st.pop_back();
+		for (auto e : g.g[u]) if (!vis[e.to] and e.flow < e.cap)
+			vis[e.to] = 1, st.push_back(e.to);
+	}
+	for (int i = 0; i < g.g.size(); i++) for (auto e : g.g[i])
+		if (vis[i] and !vis[e.to] and !e.res) cut.emplace_back(i, e.to);
+	return cut;
+}
+
+
+void solve()
+{
+    int n, m; cin >> n >> m;
+    const int SOURCE = 0;
+    const int SINK = n + m + 1;
+    Dinic f = Dinic(n + m + 2);
+    L(i,0,n) f.add(SOURCE, i + 1, 1);
+    L(i,0,m) f.add(n + 1 + i, SINK, 1);
+    L(i,0,n)
+    {
+        int k; cin >> k;
+        L(j,0,k)
+        {
+            int c; cin >> c;
+            f.add(i + 1, n + c, oo);
+        }
+    }
+    ll mf = f.max_flow(SOURCE, SINK);
+    cout << mf << "\n";
+}
+
+
+int main()
+{
+    ios::sync_with_stdio(0);cin.tie(0);
+    int TT = 1;
+    //cin >> TT;
+    while (TT--)
+    {
+        solve();
+    }
+}

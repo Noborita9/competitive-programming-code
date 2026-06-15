@@ -39,17 +39,25 @@ void solve()
 {
     int n, q; cin >> n >> q;
     vec<int> a(n); L(i,0,n) cin >> a[i];
+    // Index compression
+    vec<int> raw(ALL(a)); 
+    sort(ALL(raw));
+    raw.erase(unique(ALL(raw)), end(raw));
+    auto gix = [&](int t){return lower_bound(ALL(raw), t) - begin(raw);};
+    L(i,0,n) a[i] = gix(a[i]);
+    // a[i] ahora esta comprimido entre [0, n]
     vec<vec<pair<int,int>>> qs(n);
     L(i,0,q) {
         int l, r; cin >> l >> r;
         qs[r - 1].eb(l - 1, i);
     }
     ST st(n + 1);
-    map<int,int> last; L(i,0,n) last[a[i]] = n;
+    vec<int> last(n, -1);
     vec<int> ans(q);
     L(r,0,n){
-        st.upd(last[a[r]], -1);
-        st.upd(last[a[r]]=r,1);
+        if (last[a[r]] != -1) st.upd(last[a[r]], - 1);
+        last[a[r]] = r;
+        st.upd(r, 1);
         for (auto [l, i]: qs[r]) {
             ans[i] = st.query(l, r + 1);
         }

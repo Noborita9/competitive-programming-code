@@ -11,20 +11,21 @@ using namespace std;
 using ll = long long;
 using ld = long double;
 
-const int N = 11e6;
-
-
-using ii = pair<ll, ll>;
-
 void solve()
 {
-    int n, m; cin >> n >> m;
-    vec<ll> a(n);
-    L(i,0,n) cin >>a[i];
-    sort(ALL(a));
-    ll sm = 0;
-    L(i,2, n) sm += 2 * a[i];
-    // oh shit
+    int n, k; cin >> n >> k;
+    vec<int> a(n); L(i,0,n){
+        char c; cin >> c; a[i] = c == '1';
+    }
+    for (int i = n - 1 ; i >= k; i --) {
+        if (a[i]) {
+            a[i] = 0;
+            a[i - k] = 1 - a[i - k];
+        }
+    }
+    bool pos = 1;
+    L(i,0,k) pos = pos && (a[i] == 0);
+    cout << (pos ? "YES" :  "NO") << "\n";
 }
 
 
@@ -35,7 +36,6 @@ int main()
     cin >> TT;
     while (TT--)
     {
-        // cout << TT << "\n";
         solve();
     }
 }
